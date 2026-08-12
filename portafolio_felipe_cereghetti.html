@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Felipe Cereghetti | Portfolio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#050505',
+                        brand: {
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6',
+                            accent: '#214e95'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #214e95; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6; 
+        }
+
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background: rgba(20, 20, 25, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .floating-nav {
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Sections */
+        .section-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease-in-out;
+        }
+
+        .section-container.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+    
+    <!-- Background Animation -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Top Header -->
+    <header class="w-full p-6 md:p-8 flex justify-between items-center fixed top-0 z-40 glass-panel border-b-0 border-x-0 border-t-0 rounded-none">
+        <div class="flex items-center gap-3">
+            <div class="font-display font-bold text-2xl tracking-tighter">
+                <span class="text-white">Felipe</span> <span class="text-brand-accent">Cereghetti</span>
+            </div>
+            <span class="hidden md:block text-xs font-mono text-gray-400 bg-white/5 px-2 py-1 rounded border border-white/10">Backend/IT</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <button onclick="navigate('contacto')" class="glass-panel px-5 py-2 rounded-md text-sm font-medium hover:bg-white/10 transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-envelope text-brand-accent text-sm"></i> Contacto
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col justify-center pt-24 pb-32 px-6 md:px-20 max-w-7xl mx-auto w-full min-h-screen relative z-10">
+        
+        <!-- INICIO SECTION -->
+        <section id="inicio" class="section-container active flex-col md:flex-row items-center justify-between h-full w-full mt-10 md:mt-0 gap-12">
+            <!-- Text Content -->
+            <div class="max-w-2xl flex-1 order-2 md:order-1 text-center md:text-left">
+                <p class="text-brand-accent font-mono mb-4 text-sm md:text-base tracking-wide">¡Hola! Mi nombre es</p>
+                <h1 class="font-display text-5xl md:text-7xl font-bold leading-tight mb-2">
+                    Felipe Cereghetti.
+                </h1>
+                <h2 class="text-2xl md:text-4xl text-gray-300 font-bold mb-6 font-display">
+                    Construyo sistemas <span class="text-brand-accent">Backend</span>.
+                </h2>
+                <p class="text-gray-400 text-lg max-w-xl mb-10 leading-relaxed mx-auto md:mx-0">
+                    Soy estudiante de Ingeniería en Sistemas. Me especializo en diseñar bases de datos, infraestructura IT y potenciar automatizaciones utilizando modelos de Inteligencia Artificial.
+                </p>
+                
+                <div class="flex items-center justify-center md:justify-start gap-6">
+                    <button onclick="navigate('proyectos')" class="bg-brand-accent hover:bg-blue-600 text-white px-8 py-4 rounded-md font-medium transition-all shadow-[0_0_20px_rgba(33,78,149,0.4)] text-sm">
+                        Ver mis proyectos
+                    </button>
+                    <button onclick="navigate('contacto')" class="text-gray-400 hover:text-white transition-colors text-sm font-medium flex items-center gap-2 group">
+                        Contactar <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Profile Picture -->
+            <div class="flex-1 order-1 md:order-2 flex justify-center md:justify-end w-full">
+                <div class="relative w-48 h-48 md:w-80 md:h-80 group">
+                    <!-- Glow effect behind the image -->
+                    <div class="absolute inset-0 bg-brand-accent/30 rounded-full blur-3xl group-hover:bg-brand-accent/50 transition-all duration-500"></div>
+                    <!-- Actual Image (Reemplazar URL por la foto real de Felipe) -->
+                    <img src="https://placehold.co/400x400/0a0a0f/214e95?text=Foto+Felipe" alt="Felipe Cereghetti" class="relative z-10 w-full h-full object-cover rounded-full border-2 border-white/10 shadow-2xl ring-4 ring-black/50">
+                </div>
+            </div>
+        </section>
+
+        <!-- PROYECTOS SECTION -->
+        <section id="proyectos" class="section-container flex-col w-full mt-10">
+            <div class="mb-12">
+                <h2 class="text-5xl font-bold mb-4">Mis <span class="text-brand-accent">Proyectos</span></h2>
+                <p class="text-gray-400 text-lg">Casos de estudio, arquitecturas y desarrollos destacados.</p>
+            </div>
+            
+            <!-- Contenedores Dinámicos -->
+            <h3 class="text-2xl font-bold text-white mb-6 border-b border-white/10 pb-2">Software</h3>
+            <div id="grid-software" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12"></div>
+
+            <h3 class="text-2xl font-bold text-white mb-6 border-b border-white/10 pb-2">Hardware</h3>
+            <div id="grid-hardware" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12"></div>
+
+            <h3 class="text-2xl font-bold text-white mb-6 border-b border-white/10 pb-2">Otros</h3>
+            <div id="grid-otros" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12"></div>
+        </section>
+
+        <!-- CV SECTION -->
+        <section id="cv" class="section-container flex-col w-full mt-10 max-w-5xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b border-white/10 pb-6 gap-4">
+                <div class="max-w-2xl">
+                    <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Stack <span class="text-brand-accent">Técnico</span></h2>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        <strong class="text-white">Mi diferencial:</strong> A diferencia de un perfil puramente de desarrollo, mi background en <span class="text-brand-accent">Soporte IT y Ciberseguridad (ISC2)</span> me permite diseñar código pensando en la infraestructura subyacente, la seguridad y la resiliencia en producción, complementado con un dominio activo en automatizaciones con Inteligencia Artificial.
+                    </p>
+                </div>
+                <button class="glass-panel hover:bg-white/10 px-5 py-3 rounded-md transition-all text-sm flex items-center gap-2 border border-white/20 whitespace-nowrap" onclick="downloadCV()">
+                    <i class="fa-solid fa-download text-brand-accent"></i> Descargar CV
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Stack -->
+                <div class="md:col-span-1 space-y-8 font-mono">
+                    <div>
+                        <h4 class="text-white font-bold mb-4 flex items-center gap-2 border-b border-white/10 pb-2"><i class="fa-solid fa-code text-brand-accent"></i> Core Backend</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">Node.js</span>
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">Express</span>
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">Java / Spring Boot</span>
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">Python</span>
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">C / C++</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-4 flex items-center gap-2 border-b border-white/10 pb-2"><i class="fa-solid fa-database text-brand-accent"></i> Datos & Nube</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">SQL / PostgreSQL</span>
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">AWS Foundations</span>
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">Docker</span>
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">RESTful APIs</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-4 flex items-center gap-2 border-b border-white/10 pb-2"><i class="fa-solid fa-brain text-brand-accent"></i> IA & Automatización</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">Prompt Engineering</span>
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">Agentic AI</span>
+                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300">LLM Integration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="md:col-span-2 space-y-8">
+                    <!-- Exp 1 -->
+                    <div class="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-2 before:w-3 before:h-3 before:bg-brand-accent before:rounded-sm before:shadow-[0_0_10px_#214e95]">
+                        <div class="absolute left-[5px] top-6 bottom-[-2rem] w-[2px] bg-white/10"></div>
+                        <h3 class="text-xl font-bold">Tutor de Inteligencia Artificial</h3>
+                        <h4 class="text-brand-accent text-sm mb-2 font-mono">Fundación Innovación con Inclusión | Jun 2026 - Actualidad</h4>
+                        <p class="text-gray-400 text-sm">Capacitación a <strong class="text-gray-200">+X profesionales</strong> de empresas en el uso de LLMs y automatizaciones. Reducción de tiempos operativos en tareas administrativas en un <strong class="text-gray-200">[X]%</strong> mediante la implementación y enseñanza de herramientas de IA generativa.</p>
+                    </div>
+                    <!-- Exp 2 -->
+                    <div class="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-2 before:w-3 before:h-3 before:bg-blue-500 before:rounded-sm before:shadow-[0_0_10px_#3b82f6]">
+                        <div class="absolute left-[5px] top-6 bottom-[-2rem] w-[2px] bg-white/10"></div>
+                        <h3 class="text-xl font-bold">Pasantía Soporte IT</h3>
+                        <h4 class="text-blue-400 text-sm mb-2 font-mono">Tallion | Ago 2025 - Mar 2026</h4>
+                        <p class="text-gray-400 text-sm">Gestión de incidencias (CRM propio), garantizando un SLA superior al <strong class="text-gray-200">95%</strong>. Diagramación de <strong class="text-gray-200">+50 entidades</strong> de bases de datos, acelerando el proceso de análisis previo a la migración a AWS.</p>
+                    </div>
+                     <!-- Edu -->
+                     <div class="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-2 before:w-3 before:h-3 before:bg-white/30 before:rounded-sm">
+                        <h3 class="text-xl font-bold">Ingeniería en Sistemas de Información</h3>
+                        <h4 class="text-gray-300 text-sm mb-2 font-mono">UTN | 2022 - Actualidad</h4>
+                        <p class="text-gray-400 text-sm">ISC2 Certified in Cybersecurity (CC) obtenido en 2026. Curso de Data Analytics (SQL, Power BI) en 2024. Bachiller con especialización en Mecatrónica (ORT).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACTO SECTION -->
+        <section id="contacto" class="section-container flex-col w-full mt-10 max-w-3xl mx-auto text-center">
+            <div class="glass-panel p-10 md:p-16 rounded-xl relative overflow-hidden border border-white/10">
+                <!-- Decorative background elements -->
+                <div class="absolute -top-20 -left-20 w-64 h-64 bg-brand-accent/20 rounded-full blur-[80px]"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-20 h-20 mx-auto bg-dark border border-white/10 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-black/50">
+                        <i class="fa-solid fa-envelope-open-text text-3xl text-brand-accent"></i>
+                    </div>
+                    <h2 class="font-display text-4xl font-bold mb-4">Mi contacto</h2>
+                    <p class="text-gray-400 mb-8 max-w-lg mx-auto text-sm">Espacio para intercambio técnico, consultas sobre proyectos o propuestas laborales.</p>
+                    
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="mailto:felipecereghetti@yahoo.com.ar" class="bg-brand-accent text-white px-8 py-3 rounded-md font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-envelope"></i> Correo
+                        </a>
+                        <a href="https://linkedin.com/in/felipecereghetti" target="_blank" class="glass-panel hover:bg-white/10 px-8 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2 text-sm border border-white/20">
+                            <i class="fa-brands fa-linkedin text-blue-400"></i> LinkedIn
+                        </a>
+                        <a href="https://github.com/FeceUTN" target="_blank" class="glass-panel hover:bg-white/10 px-8 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2 text-sm border border-white/20">
+                            <i class="fa-brands fa-github text-white"></i> GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation Dock -->
+    <nav class="fixed bottom-6 left-1/2 transform -translate-x-1/2 floating-nav px-2 py-2 rounded-2xl z-50 flex gap-1 shadow-2xl">
+        <button onclick="navigate('inicio')" class="nav-btn active px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+            Inicio
+        </button>
+        <button onclick="navigate('proyectos')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+            Proyectos
+        </button>
+        <button onclick="navigate('cv')" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+            Stack
+        </button>
+    </nav>
+
+    <!-- Custom Toast Container -->
+    <div id="toast-container" class="fixed top-24 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Scripts -->
+    <script>
+        // --- Navigation Logic ---
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-white', 'bg-white/10');
+                btn.classList.add('text-gray-400');
+                if(btn.innerText.includes(sectionId) || (sectionId === 'cv' && btn.innerText.includes('stack'))) {
+                    btn.classList.add('text-white', 'bg-white/10');
+                    btn.classList.remove('text-gray-400');
+                }
+            });
+
+            document.querySelectorAll('.section-container').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            
+            setTimeout(() => {
+                document.getElementById(sectionId).classList.add('active');
+                window.scrollTo(0, 0);
+            }, 50);
+        }
+
+        // --- Custom Toast Notification ---
+        function downloadCV() {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'glass-panel border-l-4 border-brand-accent text-white px-4 py-3 rounded shadow-lg transform transition-all duration-300 translate-x-full opacity-0 font-mono text-sm flex items-center gap-3';
+            toast.innerHTML = `<i class="fa-solid fa-circle-info text-brand-accent"></i> <span>Iniciando descarga del CV...</span>`;
+            
+            container.appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // --- Canvas Background Animation ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = '#214e95';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initCanvas() {
+            resize();
+            window.addEventListener('resize', resize);
+            for (let i = 0; i < 70; i++) {
+                particles.push(new Particle());
+            }
+            animate();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(33, 78, 149, ${1 - dist/150})`;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.onload = initCanvas;
+        
+        document.querySelector('.nav-btn').classList.add('text-white', 'bg-white/10');
+        document.querySelector('.nav-btn').classList.remove('text-gray-400');
+
+        // --- Generación Dinámica de Proyectos ---
+        const misProyectos = [
+            // SOFTWARE
+            {
+                categoria: "Software",
+                titulo: "SPA Web Santoro",
+                descripcion: "SPA para leandro santoro",
+                imagen: "santoroweb.jpg",
+                tags: ["TypeScript", "Next.js", "React"],
+                links: {
+                    demo: "https://www.leandrosantoro.com/",
+                    github: "https://github.com/FeceUTN/Santoro-Web"
+                }
+            },
+            {
+                categoria: "Software",
+                titulo: "Simulación Sistema Operativo",
+                descripcion: "Trabajo práctico para materia Sistemas Operativos",
+                imagen: "consolas.jpeg",
+                tags: ["C", "Linux", "Bash"],
+                links: {
+                    github: "https://github.com/FeceUTN/TP-Sistemas-Operativos"
+                }
+            },
+            {
+                categoria: "Software",
+                titulo: "Proyecto Full Stack Desastres Naturales",
+                descripcion: "Trabajo práctico para materia Diseño de Sistemas de Información",
+                imagen: "desastres naturales.jpg",
+                tags: ["Java", "Springboot", "SQL"],
+                links: {
+                    github: "https://github.com/FeceUTN/Backend-Java-App"
+                }
+            },
+            // HARDWARE
+            {
+                categoria: "Hardware",
+                titulo: "Estación Meteorológica Tifón",
+                descripcion: "Estación meteorológica que vende datos recolectados por criptos, proyecto final ORT",
+                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Foto+Estacion",
+                tags: ["IOT", "ESP32", "Crypto"],
+                links: {
+                    privado: true
+                }
+            },
+            {
+                categoria: "Hardware",
+                titulo: "Detector de Fuga de Gas",
+                descripcion: "Detector de dióxido de carbono que suena una alarma y envía notificación a telegram",
+                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Foto+Detector",
+                tags: ["IOT", "ESP32", "Python"],
+                links: {
+                    privado: true
+                }
+            },
+            {
+                categoria: "Hardware",
+                titulo: "Servidor Casero",
+                descripcion: "Reciclado de una PC vieja para un servidor local ubuntu de múltiples usos (NAS, streaming, etc)",
+                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Foto+Server",
+                tags: ["Linux", "Redes"],
+                links: {
+                    privado: true
+                }
+            },
+            // OTROS (Emprendimientos)
+            {
+                categoria: "Otros",
+                titulo: "Marketflix",
+                descripcion: "Emprendimiento de Marketing, desarrollo de aplicaciones y chatbots.",
+                imagen: "mflix.jpg",
+                tags: ["No-code", "Glide"],
+                links: {
+                    demo: "https://gymsanfernando.glide.page"
+                }
+            },
+            {
+                categoria: "Otros",
+                titulo: "Servicio Técnico PC/Notebooks",
+                descripcion: "Emprendimiento de reparación y armado de PCs y notebooks",
+                imagen: "flyer.jpeg",
+                tags: ["Computación", "IT"],
+                links: {
+                    privado: true
+                }
+            }
+        ];
+
+        function renderizarProyectos() {
+            const grids = {
+                "Software": document.getElementById('grid-software'),
+                "Hardware": document.getElementById('grid-hardware'),
+                "Otros": document.getElementById('grid-otros')
+            };
+
+            // Limpiar grids previos por si se vuelve a renderizar
+            Object.values(grids).forEach(grid => grid.innerHTML = '');
+
+            misProyectos.forEach(proy => {
+                const grid = grids[proy.categoria];
+                if (!grid) return; 
+
+                let linksHTML = '';
+                const tagsHTML = proy.tags.map(tag => `<span class="text-xs py-1 px-2 bg-white/5 border border-white/10 text-gray-300 rounded font-mono">${tag}</span>`).join('');
+
+                const cardHTML = `
+                    <div class="glass-panel rounded-xl group hover:border-brand-accent transition-all duration-300 overflow-hidden flex flex-col h-full border border-white/10">
+                        <div class="h-48 w-full overflow-hidden relative border-b border-white/10 bg-dark/50 flex items-center justify-center text-gray-500">
+                            <!-- Si la imagen falla, muestra un texto en su lugar -->
+                            <img src="${proy.imagen}" alt="${proy.titulo}" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 absolute inset-0 z-10"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span class="hidden relative z-0 px-4 text-center font-mono text-sm">${proy.titulo} (Imagen Local)</span>
+                        </div>
+                        <div class="p-6 bg-dark/80 flex flex-col flex-grow relative z-10">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-bold pr-2">${proy.titulo}</h3>
+                                <div class="flex gap-3 shrink-0">${linksHTML}</div>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-6 flex-grow">${proy.descripcion}</p>
+                            <div class="flex flex-wrap gap-2 mt-auto font-mono">${tagsHTML}</div>
+                        </div>
+                    </div>
+                `;
+                
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        renderizarProyectos();
+    </script>
+</body>
+</html>
