@@ -29,25 +29,6 @@
                             purple: '#8b5cf6',
                             accent: '#214e95'
                         }
-                    },
-                    keyframes: {
-                        slideIn: {
-                            '0%': { opacity: '0', transform: 'translateX(-20px)' },
-                            '100%': { opacity: '1', transform: 'translateX(0)' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0', transform: 'translateY(10px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        pulse: {
-                            '0%, 100%': { opacity: '1' },
-                            '50%': { opacity: '0.7' },
-                        }
-                    },
-                    animation: {
-                        slideIn: 'slideIn 0.6s ease-out',
-                        fadeIn: 'fadeIn 0.5s ease-out',
-                        pulse: 'pulse 2s ease-in-out infinite',
                     }
                 }
             }
@@ -61,11 +42,11 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             background-color: #050505;
             color: #ffffff;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            scroll-behavior: smooth;
         }
 
         ::-webkit-scrollbar {
@@ -95,20 +76,7 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .section-container {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
-        }
-
-        .section-container.active {
-            display: flex;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        #bg-canvas {
+        canvas#bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -118,12 +86,32 @@
             opacity: 0.4;
         }
 
-        .project-card {
-            transition: all 0.4s ease;
+        .page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 10;
         }
 
-        .project-card:hover {
-            transform: translateY(-8px);
+        .page.active {
+            display: block;
+            opacity: 1;
+            z-index: 20;
+        }
+
+        .page-content {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 80px;
+            padding-bottom: 100px;
         }
 
         .scroll-container {
@@ -132,21 +120,47 @@
             scrollbar-color: #214e95 #050505;
         }
 
-        .scroll-container::-webkit-scrollbar {
-            height: 6px;
+        .project-card {
+            animation: cardEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .scroll-container::-webkit-scrollbar-track {
-            background: transparent;
+        .project-card.exit {
+            animation: cardExit 0.2s ease-in forwards;
         }
 
-        .scroll-container::-webkit-scrollbar-thumb {
-            background: #214e95;
-            border-radius: 3px;
+        @keyframes cardEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes cardExit {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+        }
+
+        #grid-proyectos {
+            transition: all 0.4s ease;
         }
 
         .category-pill {
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
             white-space: nowrap;
         }
@@ -155,22 +169,16 @@
             background: rgba(33, 78, 149, 0.5);
             border-color: #214e95;
         }
-
-        @media (max-width: 768px) {
-            main {
-                padding-top: 80px !important;
-            }
-        }
     </style>
 </head>
-<body class="font-sans antialiased flex flex-col min-h-screen">
+<body>
     
     <canvas id="bg-canvas"></canvas>
 
-    <header class="w-full px-4 md:px-8 py-4 md:py-6 flex justify-between items-center fixed top-0 z-40 glass-panel border-b border-white/5 rounded-none">
+    <header class="fixed top-0 w-full px-4 md:px-8 py-4 md:py-6 flex justify-between items-center z-50 glass-panel border-b border-white/5">
         <button onclick="navigate('inicio')" class="flex items-center gap-2 md:gap-3 group hover:opacity-80 transition-opacity">
             <div class="font-display font-bold text-xl md:text-2xl tracking-tighter">
-                <span class="text-white group-hover:text-brand-accent transition-colors">Felipe</span> <span class="text-brand-accent">Cereghetti</span>
+                <span class="text-white">Felipe</span> <span class="text-brand-accent">Cereghetti</span>
             </div>
             <span class="hidden md:block text-xs font-mono text-gray-400 bg-white/5 px-2 py-1 rounded border border-white/10">Backend/IT</span>
         </button>
@@ -183,165 +191,215 @@
         </div>
     </header>
 
-    <main class="flex-grow flex flex-col justify-center pt-20 md:pt-24 pb-24 md:pb-32 px-4 md:px-20 max-w-7xl mx-auto w-full min-h-screen relative z-10">
+    <div id="pages-container">
         
-        <section id="inicio" class="section-container active flex-col md:flex-row items-center justify-between h-full w-full gap-8 md:gap-12">
-            <div class="max-w-2xl flex-1 order-2 md:order-1 text-center md:text-left animate-slideIn">
-                <p class="text-brand-accent font-mono mb-4 text-xs md:text-base tracking-wide">¡Hola! Mi nombre es</p>
-                <h1 class="font-display text-4xl md:text-7xl font-bold leading-tight mb-2 animate-fadeIn" style="animation-delay: 0.1s;">
-                    Felipe Cereghetti.
-                </h1>
-                <h2 class="text-xl md:text-4xl text-gray-300 font-bold mb-6 font-display">
-                    Construyo sistemas <span class="text-brand-accent">Backend</span>.
-                </h2>
-                <p class="text-gray-400 text-base md:text-lg max-w-xl mb-10 leading-relaxed mx-auto md:mx-0 animate-fadeIn" style="animation-delay: 0.2s;">
-                    Soy estudiante de Ingeniería en Sistemas. Me especializo en diseñar bases de datos, infraestructura IT y potenciar automatizaciones utilizando modelos de Inteligencia Artificial.
-                </p>
-                
-                <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 md:gap-6">
-                    <button onclick="navigate('proyectos')" class="bg-brand-accent hover:bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-md font-medium transition-all shadow-[0_0_20px_rgba(33,78,149,0.4)] hover:shadow-[0_0_30px_rgba(33,78,149,0.6)] text-sm w-full sm:w-auto">
-                        Ver mis proyectos
-                    </button>
-                    <button onclick="navigate('contacto')" class="text-gray-400 hover:text-brand-accent transition-colors text-sm font-medium flex items-center justify-center gap-2 group w-full sm:w-auto">
-                        Contactar <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="flex-1 order-1 md:order-2 flex justify-center md:justify-end w-full animate-slideIn">
-                <div class="relative w-40 h-40 md:w-80 md:h-80 group">
-                    <div class="absolute inset-0 bg-brand-accent/30 rounded-full blur-3xl group-hover:bg-brand-accent/50 transition-all duration-500"></div>
-                    <img src="https://placehold.co/400x400/0a0a0f/214e95?text=Felipe+Cereghetti" alt="Felipe Cereghetti" class="relative z-10 w-full h-full object-cover rounded-full border-2 border-white/10 shadow-2xl ring-4 ring-black/50 hover:scale-105 transition-transform duration-500">
-                </div>
-            </div>
-        </section>
-
-        <section id="proyectos" class="section-container flex-col w-full">
-            <div class="mb-8 md:mb-12">
-                <h2 class="text-4xl md:text-5xl font-bold mb-2 md:mb-4 animate-fadeIn">Mis <span class="text-brand-accent">Proyectos</span></h2>
-                <p class="text-gray-400 text-base md:text-lg animate-fadeIn" style="animation-delay: 0.1s;">Casos de estudio, arquitecturas y desarrollos destacados.</p>
-            </div>
-            
-            <div class="mb-8 flex overflow-x-auto scroll-container gap-2 pb-2">
-                <button class="category-pill active px-4 py-2 rounded-full border border-white/20 text-sm font-medium transition-all whitespace-nowrap" onclick="filterProyectos('todos')">
-                    Todos
-                </button>
-                <button class="category-pill px-4 py-2 rounded-full border border-white/20 text-sm font-medium transition-all whitespace-nowrap" onclick="filterProyectos('Software')">
-                    Software
-                </button>
-                <button class="category-pill px-4 py-2 rounded-full border border-white/20 text-sm font-medium transition-all whitespace-nowrap" onclick="filterProyectos('Hardware')">
-                    Hardware
-                </button>
-                <button class="category-pill px-4 py-2 rounded-full border border-white/20 text-sm font-medium transition-all whitespace-nowrap" onclick="filterProyectos('Otros')">
-                    Emprendimientos
-                </button>
-            </div>
-
-            <div id="grid-proyectos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        </section>
-
-        <section id="cv" class="section-container flex-col w-full max-w-5xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b border-white/10 pb-6 gap-4">
-                <div>
-                    <h2 class="text-4xl md:text-5xl font-bold mb-2 animate-fadeIn">Stack <span class="text-brand-accent">Técnico</span></h2>
-                    <p class="text-gray-400 text-sm md:text-base animate-fadeIn" style="animation-delay: 0.1s;">Educación y tecnologías base.</p>
-                </div>
-                <button class="glass-panel hover:bg-white/10 px-4 md:px-5 py-2 rounded-md transition-all text-sm flex items-center gap-2 border border-white/20 w-full md:w-auto justify-center md:justify-start group" onclick="downloadCV()">
-                    <i class="fa-solid fa-download text-brand-accent group-hover:scale-110 transition-transform"></i> Descargar CV
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-                <div class="md:col-span-1 space-y-6 md:space-y-8 font-mono">
-                    <div class="animate-fadeIn" style="animation-delay: 0.1s;">
-                        <h4 class="text-white font-bold mb-4 flex items-center gap-2 text-sm md:text-base"><i class="fa-solid fa-code text-brand-accent"></i> Lenguajes</h4>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">Node.js</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">Express</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">Java</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">Python</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">C / C++</span>
+        <section id="inicio" class="page active">
+            <div class="page-content">
+                <div class="max-w-7xl w-full px-4 md:px-20 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+                    <div class="max-w-2xl flex-1 text-center md:text-left">
+                        <p class="text-brand-accent font-mono mb-4 text-xs md:text-base tracking-wide">¡Hola! Mi nombre es</p>
+                        <h1 class="font-display text-4xl md:text-7xl font-bold leading-tight mb-2">
+                            Felipe Cereghetti.
+                        </h1>
+                        <h2 class="text-xl md:text-4xl text-gray-300 font-bold mb-6 font-display">
+                            Construyo sistemas <span class="text-brand-accent">Backend</span>.
+                        </h2>
+                        <p class="text-gray-400 text-base md:text-lg max-w-xl mb-10 leading-relaxed mx-auto md:mx-0">
+                            Soy estudiante de Ingeniería en Sistemas. Me especializo en diseñar bases de datos, infraestructura IT y potenciar automatizaciones utilizando modelos de Inteligencia Artificial.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 md:gap-6">
+                            <button onclick="navigate('proyectos')" class="bg-brand-accent hover:bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-md font-medium transition-all shadow-[0_0_20px_rgba(33,78,149,0.4)] hover:shadow-[0_0_30px_rgba(33,78,149,0.6)] text-sm w-full sm:w-auto">
+                                Ver mis proyectos
+                            </button>
+                            <button onclick="navigate('contacto')" class="glass-panel text-gray-300 hover:text-white hover:border-brand-accent transition-all text-sm font-medium px-6 md:px-8 py-3 md:py-4 rounded-md flex items-center justify-center gap-2 group border border-white/20 w-full sm:w-auto">
+                                Contactar <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="animate-fadeIn" style="animation-delay: 0.2s;">
-                        <h4 class="text-white font-bold mb-4 flex items-center gap-2 text-sm md:text-base"><i class="fa-solid fa-database text-brand-accent"></i> Infra & DB</h4>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">SQL</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">NoSQL</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">AWS</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">Docker</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">APIs REST</span>
-                        </div>
-                    </div>
-                    <div class="animate-fadeIn" style="animation-delay: 0.3s;">
-                        <h4 class="text-white font-bold mb-4 flex items-center gap-2 text-sm md:text-base"><i class="fa-solid fa-brain text-brand-accent"></i> IA & Otros</h4>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">LLMs</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">Agentes</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">GitHub</span>
-                            <span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-gray-300 hover:border-brand-accent transition-colors">Power BI</span>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="md:col-span-2 space-y-6 md:space-y-8">
-                    <div class="relative pl-8 animate-fadeIn" style="animation-delay: 0.1s;">
-                        <div class="absolute left-0 top-2 w-4 h-4 bg-brand-accent rounded-sm shadow-[0_0_10px_#214e95]"></div>
-                        <div class="absolute left-[7px] top-6 bottom-[-2rem] w-[2px] bg-white/10"></div>
-                        <h3 class="text-lg md:text-xl font-bold">Tutor de Inteligencia Artificial</h3>
-                        <h4 class="text-brand-accent text-xs md:text-sm mb-2 font-mono">Fundación Innovación con Inclusión | Jun 2026 - Actualidad</h4>
-                        <p class="text-gray-400 text-sm">Capacitación a profesionales de empresas y universidades en el uso de LLMs, prompting avanzado y automatización de tareas.</p>
-                    </div>
-                    <div class="relative pl-8 animate-fadeIn" style="animation-delay: 0.2s;">
-                        <div class="absolute left-0 top-2 w-4 h-4 bg-blue-500 rounded-sm shadow-[0_0_10px_#3b82f6]"></div>
-                        <div class="absolute left-[7px] top-6 bottom-[-2rem] w-[2px] bg-white/10"></div>
-                        <h3 class="text-lg md:text-xl font-bold">Pasantía Soporte IT</h3>
-                        <h4 class="text-blue-400 text-xs md:text-sm mb-2 font-mono">Tallion | Ago 2025 - Mar 2026</h4>
-                        <p class="text-gray-400 text-sm">Gestión de incidencias, relevamiento y diagramación de bases de datos, soporte a operaciones y estabilización de producción.</p>
-                    </div>
-                    <div class="relative pl-8 animate-fadeIn" style="animation-delay: 0.3s;">
-                        <div class="absolute left-0 top-2 w-4 h-4 bg-white/30 rounded-sm"></div>
-                        <h3 class="text-lg md:text-xl font-bold">Ingeniería en Sistemas de Información</h3>
-                        <h4 class="text-gray-300 text-xs md:text-sm mb-2 font-mono">UTN FRBA | 2022 - Actualidad</h4>
-                        <p class="text-gray-400 text-sm">ISC2 Certified in Cybersecurity (CC) obtenido en 2026. Curso de Data Analytics (SQL, Power BI) en 2024. Bachiller con especialización en Mecatrónica (ORT).</p>
+                    <div class="flex-1 flex justify-center md:justify-end w-full">
+                        <div class="relative w-40 h-40 md:w-80 md:h-80 group">
+                            <div class="absolute inset-0 bg-brand-accent/30 rounded-full blur-3xl group-hover:bg-brand-accent/50 transition-all duration-500"></div>
+                            <img src="src/imagenes/pfp.jpg" alt="Felipe Cereghetti" class="relative z-10 w-full h-full object-cover rounded-full border-2 border-white/10 shadow-2xl ring-4 ring-black/50 hover:scale-105 transition-transform duration-500">
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="contacto" class="section-container flex-col w-full max-w-3xl mx-auto text-center">
-            <div class="glass-panel p-8 md:p-16 rounded-xl relative overflow-hidden border border-white/10">
-                <div class="absolute -top-20 -left-20 w-64 h-64 bg-brand-accent/20 rounded-full blur-[80px]"></div>
-                <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px]"></div>
-                
-                <div class="relative z-10 animate-fadeIn">
-                    <div class="w-16 md:w-20 h-16 md:h-20 mx-auto bg-dark border border-white/10 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-black/50">
-                        <i class="fa-solid fa-envelope-open-text text-2xl md:text-3xl text-brand-accent"></i>
+        <section id="proyectos" class="page">
+            <div class="page-content">
+                <div class="max-w-7xl w-full px-4 md:px-20 pt-8">
+                    <div class="mb-12 md:mb-16">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4 md:mb-6">Mis <span class="text-brand-accent">Proyectos</span></h2>
+                        <p class="text-gray-400 text-base md:text-lg">Casos de estudio, arquitecturas y desarrollos destacados.</p>
                     </div>
-                    <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">Mi contacto</h2>
-                    <p class="text-gray-400 mb-8 max-w-lg mx-auto text-sm">Espacio para intercambio técnico, consultas sobre proyectos o propuestas laborales.</p>
                     
-                    <div class="flex flex-col gap-3">
-                        <a href="mailto:felipecereghetti@yahoo.com.ar" class="bg-brand-accent text-white px-6 md:px-8 py-3 rounded-md font-bold hover:bg-blue-600 transition-all hover:shadow-[0_0_20px_rgba(33,78,149,0.4)] flex items-center justify-center gap-2 text-sm group">
-                            <i class="fa-solid fa-envelope group-hover:scale-110 transition-transform"></i> Correo
-                        </a>
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <a href="https://linkedin.com/in/felipecereghetti" target="_blank" rel="noopener noreferrer" class="glass-panel hover:bg-white/10 px-6 md:px-8 py-3 rounded-md font-medium transition-all flex items-center justify-center gap-2 text-sm border border-white/20 group flex-1">
-                                <i class="fa-brands fa-linkedin text-blue-400 group-hover:scale-110 transition-transform"></i> LinkedIn
-                            </a>
-                            <a href="https://github.com/FeceUTN" target="_blank" rel="noopener noreferrer" class="glass-panel hover:bg-white/10 px-6 md:px-8 py-3 rounded-md font-medium transition-all flex items-center justify-center gap-2 text-sm border border-white/20 group flex-1">
-                                <i class="fa-brands fa-github text-white group-hover:scale-110 transition-transform"></i> GitHub
-                            </a>
+                    <div class="mb-8 flex overflow-x-auto scroll-container gap-2 pb-2">
+                        <button class="category-pill active px-4 py-2 rounded-full border border-white/20 text-sm font-medium transition-all whitespace-nowrap" onclick="filterProyectos('todos')">
+                            Todos
+                        </button>
+                        <button class="category-pill px-4 py-2 rounded-full border border-white/20 text-sm font-medium transition-all whitespace-nowrap" onclick="filterProyectos('Software')">
+                            Software
+                        </button>
+                        <button class="category-pill px-4 py-2 rounded-full border border-white/20 text-sm font-medium transition-all whitespace-nowrap" onclick="filterProyectos('Hardware')">
+                            Hardware
+                        </button>
+                        <button class="category-pill px-4 py-2 rounded-full border border-white/20 text-sm font-medium transition-all whitespace-nowrap" onclick="filterProyectos('Otros')">
+                            Emprendimientos
+                        </button>
+                    </div>
+
+                    <div id="grid-proyectos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cv" class="page">
+            <div class="page-content">
+                <div class="max-w-6xl w-full px-4 md:px-20 pt-8">
+                    <div class="mb-16">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4">Stack <span class="text-brand-accent">Técnico</span></h2>
+                        <p class="text-gray-400 text-base">Herramientas, lenguajes y tecnologías que domino.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+                        <div>
+                            <h4 class="text-white font-bold mb-6 flex items-center gap-3 text-lg"><i class="fa-solid fa-code text-brand-accent text-xl"></i> Lenguajes</h4>
+                            <div class="space-y-3">
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">Python</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">JavaScript</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">Java</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">C / C++</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-white font-bold mb-6 flex items-center gap-3 text-lg"><i class="fa-solid fa-server text-brand-accent text-xl"></i> Backend</h4>
+                            <div class="space-y-3">
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">Node.js</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">Express.js</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">Spring Boot</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">React</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-white font-bold mb-6 flex items-center gap-3 text-lg"><i class="fa-solid fa-database text-brand-accent text-xl"></i> Infra & DB</h4>
+                            <div class="space-y-3">
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">SQL</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">NoSQL</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">Docker</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">AWS</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-white font-bold mb-6 flex items-center gap-3 text-lg"><i class="fa-solid fa-brain text-brand-accent text-xl"></i> IA & Otros</h4>
+                            <div class="space-y-3">
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">LLMs</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">Prompting</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">GitHub</span>
+                                <span class="block bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300 hover:border-brand-accent transition-colors cursor-default">Power BI</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-16 pb-16 border-b border-white/10">
+                        <h3 class="text-3xl font-bold mb-8">Experiencia <span class="text-brand-accent">Profesional</span></h3>
+                        <div class="space-y-8">
+                            <div class="relative pl-8">
+                                <div class="absolute left-0 top-2 w-4 h-4 bg-brand-accent rounded-sm shadow-[0_0_10px_#214e95]"></div>
+                                <div class="absolute left-[7px] top-6 bottom-[-2rem] w-[2px] bg-white/10"></div>
+                                <h3 class="text-xl font-bold">Tutor de Inteligencia Artificial</h3>
+                                <h4 class="text-brand-accent text-sm mb-2 font-mono">Fundación Innovación con Inclusión | Jun 2026 - Actualidad</h4>
+                                <p class="text-gray-400 text-sm">Capacitación a profesionales de empresas y universidades en el uso de LLMs, prompting avanzado y automatización de tareas. Investigación y evaluación de nuevas tecnologías para la actualización continua de contenidos.</p>
+                            </div>
+                            <div class="relative pl-8">
+                                <div class="absolute left-0 top-2 w-4 h-4 bg-blue-500 rounded-sm shadow-[0_0_10px_#3b82f6]"></div>
+                                <div class="absolute left-[7px] top-6 bottom-[-2rem] w-[2px] bg-white/10"></div>
+                                <h3 class="text-xl font-bold">Pasantía Soporte IT</h3>
+                                <h4 class="text-blue-400 text-sm mb-2 font-mono">Tallion | Ago 2025 - Mar 2026</h4>
+                                <p class="text-gray-400 text-sm">Gestión de incidencias mediante tickets (CRM), garantizando continuidad operativa y cumplimiento de SLAs. Relevamiento y diagramación de bases de datos para migración a AWS. Soporte a operaciones IT y estabilización de producción.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-3xl font-bold mb-8">Educación <span class="text-brand-accent">& Certificaciones</span></h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="glass-panel p-6 rounded-lg border border-white/10">
+                                <h4 class="text-white font-bold mb-2">Ingeniería en Sistemas de Información</h4>
+                                <p class="text-brand-accent text-sm mb-2">UTN FRBA | 2022 - Actualidad</p>
+                                <p class="text-gray-400 text-sm">Formación en desarrollo, infraestructura, bases de datos y sistemas distribuidos.</p>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg border border-white/10">
+                                <h4 class="text-white font-bold mb-2">ISC2 Certified in Cybersecurity (CC)</h4>
+                                <p class="text-brand-accent text-sm mb-2">ISC2 | 2026</p>
+                                <p class="text-gray-400 text-sm">Certificación profesional en ciberseguridad y seguridad de la información.</p>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg border border-white/10">
+                                <h4 class="text-white font-bold mb-2">Curso Data Analytics</h4>
+                                <p class="text-brand-accent text-sm mb-2">UTN FRBA | 2024</p>
+                                <p class="text-gray-400 text-sm">SQL, análisis de datos y visualización con Power BI.</p>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg border border-white/10">
+                                <h4 class="text-white font-bold mb-2">Bachiller en Informática</h4>
+                                <p class="text-brand-accent text-sm mb-2">Escuela ORT | 2017 - 2021</p>
+                                <p class="text-gray-400 text-sm">Especialización en Mecatrónica.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 pt-8 border-t border-white/10">
+                        <h4 class="text-white font-bold mb-4 flex items-center gap-3 text-lg"><i class="fa-solid fa-globe text-brand-accent text-xl"></i> Idiomas</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <span class="bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300">Español - Nativo</span>
+                            <span class="bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm text-gray-300">Inglés - Avanzado (FCE Cambridge)</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
 
-    <footer class="border-t border-white/5 py-8 px-4 md:px-8 z-20">
+        <section id="contacto" class="page">
+            <div class="page-content flex items-center justify-center">
+                <div class="max-w-3xl w-full px-4 md:px-20">
+                    <div class="glass-panel p-8 md:p-16 rounded-xl relative overflow-hidden border border-white/10">
+                        <div class="absolute -top-20 -left-20 w-64 h-64 bg-brand-accent/20 rounded-full blur-[80px]"></div>
+                        <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px]"></div>
+                        
+                        <div class="relative z-10 text-center">
+                            <div class="w-16 md:w-20 h-16 md:h-20 mx-auto bg-dark border border-white/10 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-black/50">
+                                <i class="fa-solid fa-envelope-open-text text-2xl md:text-3xl text-brand-accent"></i>
+                            </div>
+                            <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">Mi contacto</h2>
+                            <p class="text-gray-400 mb-8 max-w-lg mx-auto text-sm">Espacio para intercambio técnico, consultas sobre proyectos o propuestas laborales.</p>
+                            
+                            <div class="flex flex-col gap-3">
+                                <a href="mailto:felipecereghetti@yahoo.com.ar" class="bg-brand-accent text-white px-6 md:px-8 py-3 rounded-md font-bold hover:bg-blue-600 transition-all hover:shadow-[0_0_20px_rgba(33,78,149,0.4)] flex items-center justify-center gap-2 text-sm group">
+                                    <i class="fa-solid fa-envelope group-hover:scale-110 transition-transform"></i> Correo
+                                </a>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <a href="https://linkedin.com/in/felipecereghetti" target="_blank" rel="noopener noreferrer" class="glass-panel hover:bg-white/10 px-6 md:px-8 py-3 rounded-md font-medium transition-all flex items-center justify-center gap-2 text-sm border border-white/20 group flex-1">
+                                        <i class="fa-brands fa-linkedin text-blue-400 group-hover:scale-110 transition-transform"></i> LinkedIn
+                                    </a>
+                                    <a href="https://github.com/FeceUTN" target="_blank" rel="noopener noreferrer" class="glass-panel hover:bg-white/10 px-6 md:px-8 py-3 rounded-md font-medium transition-all flex items-center justify-center gap-2 text-sm border border-white/20 group flex-1">
+                                        <i class="fa-brands fa-github text-white group-hover:scale-110 transition-transform"></i> GitHub
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="fixed bottom-0 w-full border-t border-white/5 py-4 px-4 md:px-8 z-40 bg-dark/80 backdrop-blur">
         <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
                 <p class="text-gray-500 text-xs md:text-sm">© 2026 Felipe Cereghetti. Todos los derechos reservados.</p>
                 <div class="flex gap-6">
                     <a href="https://github.com/FeceUTN" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-brand-accent transition-colors">
@@ -358,7 +416,7 @@
         </div>
     </footer>
 
-    <nav class="fixed bottom-6 left-1/2 transform -translate-x-1/2 floating-nav px-2 py-2 rounded-2xl z-50 flex gap-1 shadow-2xl">
+    <nav class="fixed bottom-24 md:bottom-8 left-1/2 transform -translate-x-1/2 floating-nav px-2 py-2 rounded-2xl z-50 flex gap-1 shadow-2xl">
         <button onclick="navigate('inicio')" class="nav-btn active px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
             Inicio
         </button>
@@ -378,7 +436,7 @@
                 categoria: "Software",
                 titulo: "SPA Web Santoro",
                 descripcion: "Sitio web profesional con diseño moderno y responsivo para Leandro Santoro.",
-                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Santoro+Web",
+                imagen: "src/imagenes/santoroweb.jpg",
                 tags: ["TypeScript", "Next.js", "React"],
                 links: {
                     demo: "https://www.leandrosantoro.com/",
@@ -389,7 +447,7 @@
                 categoria: "Software",
                 titulo: "Simulación Sistema Operativo",
                 descripcion: "Implementación de simulador de kernel para trabajo práctico de Sistemas Operativos.",
-                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=SO+Simulator",
+                imagen: "src/imagenes/consolas.jpeg",
                 tags: ["C", "Linux", "Bash"],
                 links: {
                     github: "https://github.com/FeceUTN/TP-Sistemas-Operativos"
@@ -399,7 +457,7 @@
                 categoria: "Software",
                 titulo: "Sistema Full Stack Desastres Naturales",
                 descripcion: "Aplicación completa para gestión de datos sobre desastres naturales con backend Spring.",
-                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Desastres+App",
+                imagen: "src/imagenes/desastres-naturales.jpg",
                 tags: ["Java", "Spring Boot", "SQL"],
                 links: {
                     github: "https://github.com/FeceUTN/Backend-Java-App"
@@ -409,7 +467,7 @@
                 categoria: "Hardware",
                 titulo: "Estación Meteorológica Tifón",
                 descripcion: "Sistema IoT que recolecta datos meteorológicos y los monetiza mediante blockchain.",
-                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Estacion+Tifon",
+                imagen: "src/imagenes/estacion.jpg",
                 tags: ["IoT", "ESP32", "Blockchain"],
                 links: {
                     privado: true
@@ -419,7 +477,7 @@
                 categoria: "Hardware",
                 titulo: "Detector de Fuga de Gas",
                 descripcion: "Dispositivo IoT que detecta CO2 y notifica por Telegram cuando hay peligro.",
-                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Detector+Gas",
+                imagen: "src/imagenes/detector.jpg",
                 tags: ["IoT", "ESP32", "Python"],
                 links: {
                     privado: true
@@ -429,7 +487,7 @@
                 categoria: "Hardware",
                 titulo: "Servidor Casero Ubuntu",
                 descripcion: "PC reciclada configurada como servidor NAS, streaming y múltiples servicios locales.",
-                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Home+Server",
+                imagen: "src/imagenes/servidor.jpg",
                 tags: ["Linux", "Networking", "NAS"],
                 links: {
                     privado: true
@@ -439,7 +497,7 @@
                 categoria: "Otros",
                 titulo: "Marketflix",
                 descripcion: "Plataforma de marketing digital con chatbots IA y apps de gestión empresarial.",
-                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Marketflix",
+                imagen: "src/imagenes/mflix.jpg",
                 tags: ["No-Code", "Glide", "API"],
                 links: {
                     demo: "https://gymsanfernando.glide.page"
@@ -449,7 +507,7 @@
                 categoria: "Otros",
                 titulo: "Servicio Técnico PC/Notebooks",
                 descripcion: "Emprendimiento de reparación, armado y mantenimiento de computadoras.",
-                imagen: "https://placehold.co/600x400/0a0a0f/214e95?text=Servicio+Tecnico",
+                imagen: "src/imagenes/flyer.jpeg",
                 tags: ["IT", "Hardware", "Support"],
                 links: {
                     privado: true
@@ -460,6 +518,11 @@
         let filtroActual = 'todos';
 
         function navigate(sectionId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-white', 'bg-white/10');
                 btn.classList.add('text-gray-400');
@@ -472,15 +535,6 @@
                     btn.classList.remove('text-gray-400');
                 }
             });
-
-            document.querySelectorAll('.section-container').forEach(sec => {
-                sec.classList.remove('active');
-            });
-            
-            setTimeout(() => {
-                document.getElementById(sectionId).classList.add('active');
-                window.scrollTo(0, 0);
-            }, 50);
         }
 
         function filterProyectos(categoria) {
@@ -489,9 +543,26 @@
             document.querySelectorAll('.category-pill').forEach(pill => {
                 pill.classList.remove('active');
             });
-            
             event.target.classList.add('active');
-            renderizarProyectos();
+
+            const grid = document.getElementById('grid-proyectos');
+            const oldCards = grid.querySelectorAll('.project-card');
+            
+            oldCards.forEach((card, index) => {
+                card.classList.add('exit');
+                card.style.animationDelay = `${index * 25}ms`;
+            });
+
+            setTimeout(() => {
+                renderizarProyectos();
+                
+                setTimeout(() => {
+                    const newCards = grid.querySelectorAll('.project-card');
+                    newCards.forEach((card, index) => {
+                        card.style.animationDelay = `${index * 50}ms`;
+                    });
+                }, 10);
+            }, 150);
         }
 
         function renderizarProyectos() {
@@ -521,7 +592,7 @@
                 ).join('');
 
                 const cardHTML = `
-                    <div class="project-card glass-panel rounded-xl group hover:border-brand-accent transition-all duration-300 overflow-hidden flex flex-col h-full border border-white/10" style="animation-delay: ${index * 0.05}s; animation: fadeIn 0.5s ease-out forwards;">
+                    <div class="project-card glass-panel rounded-xl group hover:border-brand-accent transition-all duration-300 overflow-hidden flex flex-col h-full border border-white/10" style="animation-delay: ${index * 50}ms;">
                         <div class="h-40 md:h-48 w-full overflow-hidden relative border-b border-white/10 bg-dark/50 flex items-center justify-center text-gray-500">
                             <img src="${proy.imagen}" alt="${proy.titulo}" 
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -631,12 +702,10 @@
             requestAnimationFrame(animate);
         }
 
-        window.onload = () => {
+        window.addEventListener('load', () => {
             initCanvas();
             renderizarProyectos();
-            document.querySelector('.nav-btn').classList.add('text-white', 'bg-white/10');
-            document.querySelector('.nav-btn').classList.remove('text-gray-400');
-        };
+        });
     </script>
 </body>
 </html>
